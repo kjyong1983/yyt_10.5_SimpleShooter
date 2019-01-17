@@ -20,9 +20,6 @@ public class CConnectManager : Photon.PunBehaviour {
         _gameManager = FindObjectOfType<CGameManager>();
         _join = GameObject.Find("JoinButton").GetComponent<Button>();
 
-
-
-
         if (!PhotonNetwork.connected)
         {
             if (PhotonNetwork.ConnectUsingSettings("v1.0"))
@@ -36,11 +33,6 @@ public class CConnectManager : Photon.PunBehaviour {
         }
     }
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
 	// Update is called once per frame
 	void Update () {
         _join.interactable = PhotonNetwork.connected;
@@ -59,21 +51,25 @@ public class CConnectManager : Photon.PunBehaviour {
             TypedLobby.Default
         );
     }
-
+    
+    public override void OnConnectedToMaster()
+    {
+        _connectMsg.text = "Connect to master";
+    }
 
     public override void OnConnectedToPhoton()
     {
-        base.OnConnectedToPhoton();
+        _connectMsg.text = "Connect to Photon cloud";
     }
 
     public override void OnConnectionFail(DisconnectCause cause)
     {
-        base.OnConnectionFail(cause);
+        _connectMsg.text = "Connection Failed : " + cause.ToString();
     }
 
     public override void OnCreatedRoom()
     {
-        base.OnCreatedRoom();
+        _connectMsg.text = "Created new Room";
     }
 
     public override void OnJoinedLobby()
@@ -112,9 +108,10 @@ public class CConnectManager : Photon.PunBehaviour {
         base.OnPhotonCreateRoomFailed(codeAndMsg);
     }
 
-    public override void OnPhotonJoinRoomFailed(object[] codeAndMsg)
+    public override void OnPhotonJoinRoomFailed(object[] errorMsg)
     {
-        base.OnPhotonJoinRoomFailed(codeAndMsg);
+        Debug.Log(errorMsg[1].ToString());
+        _connectMsg.text = "[오류] 방 접속을 실패함";
     }
 
 }

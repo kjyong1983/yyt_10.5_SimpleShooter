@@ -8,30 +8,31 @@ public class CPlayerAttack : Photon.MonoBehaviour {
     public float _power;
 
     float _timer;
-    public float _fireDelay = 0.3f;
+    public float _fireDelay = 0.05f;
 
     private void Update()
     {
         if (!photonView.isMine) return;
 
         _timer += Time.deltaTime;
-        
+       
     }
 
     public void Attack(Vector3 direction, Vector3 pos, Quaternion qt, int playerId)
     {
-        photonView.RPC("Fire", PhotonTargets.AllViaServer, direction, pos, qt, playerId);
+        if (!photonView.isMine) return;
+
+        if (_timer > _fireDelay)
+        {
+            photonView.RPC("Fire", PhotonTargets.AllViaServer, direction, pos, qt, playerId);
+            _timer = 0;
+        }
     }
 
     [PunRPC]
     public void Fire(Vector3 direction, Vector3 pos, Quaternion qt, int playerId)
     {
-
-        if (_timer < _fireDelay)
-            return;
-
-        _timer = 0;
-
+        
         GameObject bullet = Instantiate(_bulletPrefab, pos, qt);
 
         var bInfo = bullet.GetComponent<CBulletInfo>();

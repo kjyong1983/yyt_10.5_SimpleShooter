@@ -1,16 +1,51 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using ExitGames.Client.Photon;
 
-public class CPlayerStat : MonoBehaviour {
+public class CPlayerStat : Photon.MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
+    Text _nameText;
+    Text _scoreText;
+
+    private void Awake()
+    {
+        _nameText = GetComponentInChildren<CPlayerName>().GetComponent<Text>();
+        _scoreText = GetComponentInChildren<CPlayerScore>().GetComponent<Text>();
+
+    }
+
+    void Start () {
 		
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+        if (photonView.owner.NickName != null)
+        {
+            _nameText.text = photonView.owner.NickName;
+        }
+
+        _scoreText.text = photonView.owner.GetScore().ToString();
 	}
+
+    public void Save(Hashtable info)
+    {
+        PhotonNetwork.player.SetCustomProperties(info);
+    }
+
+    public Hashtable Load()
+    {
+        return photonView.owner.CustomProperties;
+    }
+
+    public void ClearInfo()
+    {
+        Hashtable info = Load();
+
+        info.Clear();
+
+        photonView.owner.SetScore(0);
+    }
+
 }

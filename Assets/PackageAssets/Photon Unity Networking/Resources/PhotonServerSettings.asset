@@ -43,4 +43,7 @@ MonoBehaviour:
   - RequestForPickupTimes
   - TaggedPlayer
   - Fire
+  - CreateObject
+  - DestroyObject
+  - Hit
   DisableAutoOpenWizard: 1
